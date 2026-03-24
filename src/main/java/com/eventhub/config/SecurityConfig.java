@@ -1,35 +1,3 @@
-//package com.eventhub.config;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.Customizer;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-//
-//
-//@Configuration
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth
-//
-//                        .requestMatchers("/api/auth/**").permitAll()
-//                        .requestMatchers("/api/events/**").permitAll()
-//
-//                        .requestMatchers("/api/registrations/**").hasRole("USER")
-//                        .requestMatchers("/api/users/**").hasRole("ADMIN")
-//
-//                        .anyRequest().authenticated()
-//                );
-//
-//        return http.build();
-//    }
-//}
 package com.eventhub.config;
 
 import com.eventhub.security.JwtAuthenticationFilter;
@@ -60,9 +28,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Allow authentication & event endpoints
                         .requestMatchers("/api/auth/**", "/events", "/events/*").permitAll()
+
+                        // Allow Swagger UI & API docs
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        // Role-based access
                         .requestMatchers("/api/user/**").hasRole("USER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // All other requests need authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
