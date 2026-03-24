@@ -1,14 +1,28 @@
 package com.eventhub.service;
 
-import com.eventhub.dto.CreateEventDTO;
-import com.eventhub.dto.EventDTO;
-
+import com.eventhub.entity.Category;
+import com.eventhub.entity.Event;
+import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Service interface for Event operations.
+ */
 public interface EventService {
 
-    List<EventDTO> getAllEvents();
+    List<Event> getAllEvents();
 
-    EventDTO createEvent(CreateEventDTO dto);
+    Event getEventById(Long id);
 
+    Event saveEvent(Event event);
+
+    void deleteEvent(Long id);
+
+    List<Event> getEventsByCategory(Category category);
+
+    List<Event> getEventsInPriceRange(BigDecimal min, BigDecimal max);
+
+    List<Event> getActiveEvents();
+
+    List<Event> searchEvents(String keyword);
 }

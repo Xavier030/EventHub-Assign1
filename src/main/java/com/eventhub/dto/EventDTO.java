@@ -2,17 +2,16 @@ package com.eventhub.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
-public class EventDTO {
-
+class EventDTO {
     private Long id;
-
-    private String title;
-
+    private String name;
     private String description;
-
-    private double ticketPrice;
-
-    private String category;
-
+    private BigDecimal price;
+    private LocalDateTime date;
+    private boolean isActive;
+    private String categoryName;
 }
