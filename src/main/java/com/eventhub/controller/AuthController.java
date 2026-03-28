@@ -54,12 +54,17 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+
         User user = userService.findByUsername(request.username());
+
+        // Validate user + password
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
+        // Generate JWT token
         String token = jwtService.generateToken(user);
+
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
@@ -82,7 +87,7 @@ public class AuthController {
 
         // Assign ROLE_USER
         Set<Role> roles = new HashSet<>();
-        roles.add(roleService.findByName("ROLE_USER")); // Make sure this role exists in DB
+        roles.add(roleService.findByName("ROLE_USER"));
         user.setRoles(roles);
 
         // Save user
@@ -102,5 +107,10 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         passwordResetService.resetPassword(request.token(), request.newPassword());
         return ResponseEntity.ok("Password reset successful");
+    }
+
+    @GetMapping("/debug/encode")
+    public String encode() {
+        return passwordEncoder.encode("123456");
     }
 }
